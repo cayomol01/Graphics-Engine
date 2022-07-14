@@ -1,3 +1,8 @@
+"""
+Hecho por Jose Pablo Monzon 20309
+Basado en el codigo hecho en clase
+"""
+
 from struct import pack
 
 def char(c):
@@ -60,8 +65,9 @@ class Window: # * glInit()
         self.height = height
         self.clear_color = color(clear_color) # Default "red"
         self.current_color = color(current_color) # Default "black"
-        self.setViewPort(0,0,width,height)
+        
         self.clear()
+        self.setViewPort(0,0,width,height)
         
     def clear(self): # * glClear()
         self.pixels = [ 
@@ -76,6 +82,7 @@ class Window: # * glInit()
         
     def point(self, x, y, color_p:str or tuple = None): # * glPoint(x, y)
         self.pixels[x][y] = color(color_p) if color_p else self.current_color
+            
     
     #VIEW PORT
     def setViewPort(self, x, y, width, height): # * glViewPort(x, y, width, height)
@@ -96,7 +103,9 @@ class Window: # * glInit()
         x = int((self.vp_width/2)*(x+1) + self.vp_x)
         y = int((self.vp_height/2)*(y+1) + self.vp_y)
         
-        self.point(x,y,color_p)
+        print(x,y)
+        
+        self.point(y,x,color_p)
         
     def finish(self, filename="render"): # * glFinish()
         with open("".join((filename,".bmp")), "wb") as file:
