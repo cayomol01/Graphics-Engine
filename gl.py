@@ -86,8 +86,11 @@ class Window:  # * glInit()
         self.current_color = color(color_p)
 
     def point(self, x, y, color_p: str or tuple = None):  # * glPoint(x, y)
-        self.pixels[x][y] = color(color_p) if color_p else self.current_color
-
+        try:
+            self.pixels[x][y] = color(color_p) if color_p else self.current_color
+        except IndexError:
+            print("Point out of bounds", x, y)
+            raise
     # VIEW PORT
 
     def setViewPort(self, x, y, width, height):  # * glViewPort(x, y, width, height)
@@ -111,14 +114,14 @@ class Window:  # * glInit()
 
     def finish(self, filename="render"):  # * glFinish()
         with open("".join((filename, ".bmp")), "wb") as file:
-            # header
+            # Header
             file.write(bytes('B'.encode('ascii')))
             file.write(bytes('M'.encode('ascii')))
-            file.write(dword(14 + 40 + self.width * self.height * 3))
+            file.write(dword(14 + 40 + (self.width * self.height * 3)))
             file.write(dword(0))
             file.write(dword(14 + 40))
 
-            # info header
+            #InfoHeader
             file.write(dword(40))
             file.write(dword(self.width))
             file.write(dword(self.height))
