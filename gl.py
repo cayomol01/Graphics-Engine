@@ -87,12 +87,12 @@ class Window:  # * glInit()
 
     def point(self, x, y, color_p: str or tuple = None):  # * glPoint(x, y)
         try:
-            self.pixels[x][y] = color(color_p) if color_p else self.current_color
+            self.pixels[y][x] = color(color_p) if color_p else self.current_color
         except IndexError:
             print("Point out of bounds", x, y)
             raise
+            
     # VIEW PORT
-
     def setViewPort(self, x, y, width, height):  # * glViewPort(x, y, width, height)
         self.vp_x = x
         self.vp_y = y
@@ -103,14 +103,43 @@ class Window:  # * glInit()
         for i in [(m, n) for m in range(self.vp_x, self.vp_x + self.vp_width) for n in range(self.vp_y, self.vp_y + self.vp_height)]:
             self.point([*i], color_p)
 
-        # for x in range(self.vp_x, self.vp_x + self.vp_width):
-        #     for y in range(self.vp_y, self.vp_y + self.vp_height):
-        #         self.point
-
     def pointViewPort(self, x, y, color_p: str or tuple = None):  # * glPoint(x, y)
         x = int((self.vp_width/2)*(x+1) + self.vp_x)
         y = int((self.vp_height/2)*(y+1) + self.vp_y)
         self.point(y, x, color_p)
+    
+    def line(self, x0, y0, x1, y1, color_p: str or tuple = None):
+        # Basado en: https://www.uobabylon.edu.iq/eprints/publication_2_22893_6215.pdf
+        
+        self.point(x0, y0, color_p) #Punto inicial
+             
+        dx = abs(x1 - x0) #Calculo de la diferencia de x
+        dy = abs(y1 - y0)
+                   
+        x_step = -1 if x0 > x1 else 1 #Indice de a donde tiene que avanzar
+        y_step = -1 if y0 > y1 else 1
+        
+        swap = 0
+        if dy > dx : #Si la diferencia de y es mayor que la de x intercambiamos los valores
+            dx, dy = dy, dx
+            swap = 1
+             
+        Error = 2 * dy - dx #Error
+        
+        for _ in range(dx): #Iteramos por la mayor diferencia
+            if Error < 0: #Recto
+                if swap:
+                    y0 = y0 + y_step 
+                else:
+                    x0 = x0 + x_step
+                Error += (2 * dy)
+            else: #Diagonal
+                x0 = x0 + x_step
+                y0 = y0 + y_step
+                Error += (2 * (dy - dx))
+            self.point(x0, y0, color_p)
+        self.point(x1, y1, color_p)
+        
 
     def finish(self, filename="render"):  # * glFinish()
         with open("".join((filename, ".bmp")), "wb") as file:
