@@ -134,7 +134,7 @@ class Window:  # * glInit()
             file.write(dword(0))
             file.write(dword(0))
 
-            for x in self.pixels:  # Faster
+            for x in reversed(self.pixels):  # Faster
                 for y in x:
                     file.write(y)
 
