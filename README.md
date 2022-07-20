@@ -20,10 +20,10 @@ window = Window(width=800, height=600)
 ```
 ## Features
 Has the following features: *(From newest to oldest)*
-## Ej.2 - Lines
+## Ej.2 - Lines **DONE**
 - [x] Function that draws a line.
 - [x] That function is able to draw 5 different shapes.
-## Ej.1 - Points
+## Ej.1 - Points **DONE**
 - [x] Init function
 - [x] Generate the framebuffer
 - [x] Define a viewport
