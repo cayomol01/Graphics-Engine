@@ -112,31 +112,28 @@ class Window:  # * glInit()
         # Basado en: https://www.uobabylon.edu.iq/eprints/publication_2_22893_6215.pdf
         
         self.point(x0, y0, color_p) #Punto inicial
-             
-        dx = abs(x1 - x0) #Calculo de la diferencia de x
-        dy = abs(y1 - y0)
-                   
+                    
+        dx, dy = abs(x1-x0), abs(y1 - y0) #Calculo de la diferencia de x
+   
         x_step = -1 if x0 > x1 else 1 #Indice de a donde tiene que avanzar
         y_step = -1 if y0 > y1 else 1
         
-        swap = 0
-        if dy > dx : #Si la diferencia de y es mayor que la de x intercambiamos los valores
-            dx, dy = dy, dx
-            swap = 1
-             
-        Error = 2 * dy - dx #Error
-        
+        #Si la diferencia de y es mayor que la de x intercambiamos los valores
+        dx, dy, swap = (dy, dx, 1) if dy > dx else (dx,dy,0)
+         
+        A = 2 * dy 
+        B = A - (2 * dx) # 2*(dy - dx)
+        Error = A - dx #Error 2*dy - dx
+
         for _ in range(dx): #Iteramos por la mayor diferencia
             if Error < 0: #Recto
-                if swap:
-                    y0 = y0 + y_step 
-                else:
-                    x0 = x0 + x_step
-                Error += (2 * dy)
+                x0 += x_step * (-swap + 1)
+                y0 += y_step * swap
+                Error += A
             else: #Diagonal
-                x0 = x0 + x_step
-                y0 = y0 + y_step
-                Error += (2 * (dy - dx))
+                x0 += x_step
+                y0 += y_step
+                Error += B
             self.point(x0, y0, color_p)
         self.point(x1, y1, color_p)
         
