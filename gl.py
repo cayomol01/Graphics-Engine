@@ -155,7 +155,7 @@ class Window:  # * glInit()
         self.polygon([(x, y), (x + size, y), (x + size, y + size)], color_p)
         
     def nepal(self, x, y, size, color_p: str or tuple = None): # Al principio era un pentagono, pero termino siendo la bandera de nepal
-        self.polygon([(x, y), (x + size, y), (x + size//2, y + size), (x + size//2, y + size//2), (x, y + size)], color_p)
+        self.polygon([(x, y), (x, y+size), (x + size, y +size),(x + size//2, y + size//2),(x + size, y + size//2)], color_p)
         
     def hexagon(self, x, y, size, color_p: str or tuple = None):
         self.polygon([(x,y),(x + size//2, y - size//4),(x + size, y),(x + size, y + size//2),(x + size // 2, y + 3*size//4),(x, y +size//2)], color_p)
