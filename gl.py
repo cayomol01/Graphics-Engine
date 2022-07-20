@@ -137,6 +137,28 @@ class Window:  # * glInit()
             self.point(x0, y0, color_p)
         self.point(x1, y1, color_p)
         
+    def polygon(self, points, color_p: str or tuple = None):
+               
+        for x,y in zip(points,points[1:] + points[:1]):
+            self.line(x[0], x[1], y[0], y[1], color_p)
+
+    def square(self, x, y, size, color_p: str or tuple = None):
+        self.polygon([(x, y), (x + size, y), (x + size, y + size), (x, y + size)], color_p)
+        
+    def rectangle(self, x, y, width, height, color_p: str or tuple = None):
+        self.polygon([(x, y), (x + width, y), (x + width, y + height), (x, y + height)], color_p)
+        
+    def triangle(self, x, y, size, color_p: str or tuple = None):
+        self.polygon([(x, y), (x + size, y), (x + size//2, y + size)], color_p)
+    
+    def triangle_90(self, x, y, size, color_p: str or tuple = None):
+        self.polygon([(x, y), (x + size, y), (x + size, y + size)], color_p)
+        
+    def nepal(self, x, y, size, color_p: str or tuple = None): # Al principio era un pentagono, pero termino siendo la bandera de nepal
+        self.polygon([(x, y), (x + size, y), (x + size//2, y + size), (x + size//2, y + size//2), (x, y + size)], color_p)
+        
+    def hexagon(self, x, y, size, color_p: str or tuple = None):
+        self.polygon([(x,y),(x + size//2, y - size//4),(x + size, y),(x + size, y + size//2),(x + size // 2, y + 3*size//4),(x, y +size//2)], color_p)
 
     def finish(self, filename="render"):  # * glFinish()
         with open("".join((filename, ".bmp")), "wb") as file:
