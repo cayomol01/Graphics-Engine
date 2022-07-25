@@ -184,14 +184,14 @@ class Window:  # * glInit()
             lines.reverse()
             if len(lines)==3:
                 print(lines)
-                print(lines,column[-1],points)
-                input("aa")
+                #print(lines,column[-1],points)
+                #input("aa")
             for i in range(0,len(lines),2):
                 try:
-                    self.line(lines[i][0], lines[i][1], lines[i+1][0], lines[i+1][1], "red")
+                    self.line(lines[i][0], lines[i][1], lines[i+1][0], lines[i+1][1], color_p)
                 except IndexError:
                     continue
-            self.finish()
+            #self.finish()
             #input("Press Enter to continue...")
         
         
