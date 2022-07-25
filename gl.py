@@ -111,7 +111,10 @@ class Window:  # * glInit()
     def line(self, x0, y0, x1, y1, color_p: str or tuple = None):
         # Basado en: https://www.uobabylon.edu.iq/eprints/publication_2_22893_6215.pdf
         
+        debug = []
+        
         self.point(x0, y0, color_p) #Punto inicial
+        debug.append((x0,y0))
                     
         dx, dy = abs(x1-x0), abs(y1 - y0) #Calculo de la diferencia de x
    
@@ -135,15 +138,68 @@ class Window:  # * glInit()
                 y0 += y_step
                 Error += B
             self.point(x0, y0, color_p)
+            debug.append((x0,y0))
         self.point(x1, y1, color_p)
+        debug.append((x1,y1))
+        
+        return debug
+        
         
     def polygon(self, points, color_p: str or tuple = None):
-               
+        
+        debug = []       
+        
         for x,y in zip(points,points[1:] + points[:1]):
-            self.line(x[0], x[1], y[0], y[1], color_p)
+            debug += self.line(x[0], x[1], y[0], y[1], color_p)
+        
+        return debug
+
+    def polygon_fill(self, points, color_p: str or tuple = None):
+         
+        og_polygon = self.polygon(points, color_p)
+                
+        x0 = min(points)[0]
+        xf = max(points)[0]
+        
+        for x in range(x0, xf):
+            column = [*set([points for points in og_polygon if points[0] == x])]
+            column.sort()
+            
+            lines = []
+            for i in column:
+                if (i[0],i[1]+1) in column:
+                    continue
+
+                if lines == []:
+                    lines.append(i)
+                    continue
+                if i == column[-1]:
+                    lines.append(i)
+                    continue
+                    
+                if i in points:
+                    continue
+                
+                lines.append(i)
+            lines.reverse()
+            if len(lines)==3:
+                print(lines)
+                print(lines,column[-1],points)
+                input("aa")
+            for i in range(0,len(lines),2):
+                try:
+                    self.line(lines[i][0], lines[i][1], lines[i+1][0], lines[i+1][1], "red")
+                except IndexError:
+                    continue
+            self.finish()
+            #input("Press Enter to continue...")
+        
+        
+
+
 
     def square(self, x, y, size, color_p: str or tuple = None):
-        self.polygon([(x, y), (x + size, y), (x + size, y + size), (x, y + size)], color_p)
+        return self.polygon([(x, y), (x + size, y), (x + size, y + size), (x, y + size)], color_p)
         
     def rectangle(self, x, y, width, height, color_p: str or tuple = None):
         self.polygon([(x, y), (x + width, y), (x + width, y + height), (x, y + height)], color_p)
@@ -182,8 +238,8 @@ class Window:  # * glInit()
             file.write(dword(0))
             file.write(dword(0))
 
-            for x in reversed(self.pixels):  # Faster
+            for x in self.pixels:  # Faster
                 for y in x:
                     file.write(y)
 
-        print("Done")
+        #print("Done")
