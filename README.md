@@ -1,6 +1,10 @@
 # Graphic Engine 
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
 
+## Lab output
+![imagen](https://user-images.githubusercontent.com/64183934/180923458-27f9ae30-4f8a-4b48-990e-a025823e252d.png)
+
+
 ## What is it?
 * **No**, it is not a game engine.
 * **No**, it is not a chat bot.
