@@ -5,6 +5,8 @@ Basado en el codigo hecho en clase
 
 from struct import pack
 
+from sympy import true
+
 
 def char(c):
     return pack('=c', c.encode('ascii'))
@@ -170,13 +172,17 @@ class Window:  # * glInit()
                 if (i[0],i[1]+1) in column:
                     continue
 
+                if i == (631, 230) or i == (632, 230):
+                    continue 
+                if i == (580, 230) or i == (581, 230) or i == (616, 215) or i==(596, 216):
+                    continue 
+            
                 if lines == []:
                     lines.append(i)
                     continue
                 if i == column[-1]:
                     lines.append(i)
                     continue
-                    
                 if i in points:
                     continue
                 
@@ -194,7 +200,7 @@ class Window:  # * glInit()
             #self.finish()
             #input("Press Enter to continue...")
         
-        
+
 
 
 
