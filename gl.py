@@ -3,10 +3,10 @@ Hecho por Jose Pablo Monzon 20309
 Basado en el codigo hecho en clase
 """
 
+from random import randint, random
 from struct import pack
-
-from sympy import true
-
+from ObjectObject import ObjectLiterally as Model
+from Numeme import mul
 
 def char(c):
     return pack('=c', c.encode('ascii'))
@@ -66,7 +66,6 @@ def color(color: str or tuple):
     > (0.0,0.5,1.0) should be a tuple of floats""")
         raise
 
-
 class Window:  # * glInit()
     # * glCreateWindow(width, height)
     def __init__(self, width, height, clear_color="red", current_color="black") -> None:
@@ -93,8 +92,8 @@ class Window:  # * glInit()
         try:
             self.pixels[y][x] = color(color_p) if color_p else self.current_color
         except IndexError:
-            print("Point out of bounds", x, y)
-            raise
+            #print("Point out of bounds", x, y)
+            pass
             
     # VIEW PORT
     def setViewPort(self, x, y, width, height):  # * glViewPort(x, y, width, height)
@@ -152,18 +151,24 @@ class Window:  # * glInit()
         debug.append((x1,y1))
         
         return debug
-        
-        
+           
     def polygon(self, points, color_p: str or tuple = None):
-        
+        # TODO Update vector
         debug = []       
         
         for x,y in zip(points,points[1:] + points[:1]):
-            debug += self.line(x[0], x[1], y[0], y[1], color_p)
+            try:
+                debug += self.line(x[0], x[1], y[0], y[1], color_p)
+            except TypeError:
+                print("A")
+                print(x[0], x[1], y[0], y[1], color_p)
+                print("A")
+                raise TypeError
         
         return debug
 
     def polygon_fill(self, points, color_p: str or tuple = None):
+        # TODO Update vector
          
         og_polygon = self.polygon(points, color_p)
                 
@@ -204,30 +209,112 @@ class Window:  # * glInit()
                     self.line(lines[i][0], lines[i][1], lines[i+1][0], lines[i+1][1], color_p)
                 except IndexError:
                     continue
-            #self.finish()
-            #input("Press Enter to continue...")
+            self.finish()
+            input("Press Enter to continue...")
+
+    def createObjectMatrix(self, translate, rotate, scale):
         
+        translation = [[1,0,0,translate[0]],
+                       [0,1,0,translate[1]],
+                       [0,0,1,translate[2]],
+                       [0,0,0,1]]
 
-
-
-
-    def square(self, x, y, size, color_p: str or tuple = None):
-        return self.polygon([(x, y), (x + size, y), (x + size, y + size), (x, y + size)], color_p)
+        rotation = [[1,0,0,0],
+                    [0,1,0,0],
+                    [0,0,1,0],
+                    [0,0,0,1]]
         
-    def rectangle(self, x, y, width, height, color_p: str or tuple = None):
-        self.polygon([(x, y), (x + width, y), (x + width, y + height), (x, y + height)], color_p)
-        
-    def triangle(self, x, y, size, color_p: str or tuple = None):
-        self.polygon([(x, y), (x + size, y), (x + size//2, y + size)], color_p)
+        scalation = [[scale[0],0,0,0],
+                     [0,scale[1],0,0],
+                     [0,0,scale[2],0],
+                     [0,0,0,1]]
+                
+        matrix = [mul(scalation,x) for x in list(zip(*[mul(translation,x) for x in rotation]))]
+                
+        return matrix
+                   
+    def objectTransform(self, vertex, matrix):
     
-    def triangle_90(self, x, y, size, color_p: str or tuple = None):
-        self.polygon([(x, y), (x + size, y), (x + size, y + size)], color_p)
+        vector = (*vertex,1)
         
-    def nepal(self, x, y, size, color_p: str or tuple = None): # Al principio era un pentagono, pero termino siendo la bandera de nepal
-        self.polygon([(x, y), (x, y+size), (x + size, y +size),(x + size//2, y + size//2),(x + size, y + size//2)], color_p)
+        vt = mul(matrix,vector)
         
-    def hexagon(self, x, y, size, color_p: str or tuple = None):
-        self.polygon([(x,y),(x + size//2, y - size//4),(x + size, y),(x + size, y + size//2),(x + size // 2, y + 3*size//4),(x, y +size//2)], color_p)
+        vf = list(x/vt[3] for x in vt[:3])
+      
+        return vf 
+    
+    def loadObject(self, filename, translate = (0,0,0), rotate=(0,0,0), scale=(1,1,1)):
+        model = Model(filename)
+        model_matrix = self.createObjectMatrix(translate, rotate, scale)
+        
+        for face in model.faces:
+
+            v0 = model.vertex[ face[0][0] - 1]
+            v1 = model.vertex[ face[1][0] - 1]
+            v2 = model.vertex[ face[2][0] - 1]        
+
+            v0 = self.objectTransform(v0, model_matrix)
+            v1 = self.objectTransform(v1, model_matrix)
+            v2 = self.objectTransform(v2, model_matrix)
+
+            self.glTriangle_std(v0, v1, v2, color((random(),
+                                                  random(),
+                                                  random())))
+
+    def glTriangle_std(self, A, B, C, clr = None):
+            
+        if A[1] < B[1]:
+            A, B = B, A
+        if A[1] < C[1]:
+            A, C = C, A
+        if B[1] < C[1]:
+            B, C = C, B
+
+        self.line(A,B, clr)
+        self.line(B,C, clr)
+        self.line(C,A, clr)
+        
+        def flatBottom(vA,vB,vC):
+            try:
+                mBA = (vB[0] - vA[0]) / (vB[1] - vA[1])
+                mCA = (vC[0] - vA[0]) / (vC[1] - vA[1])
+            except:
+                pass
+            else:
+                x0 = vB[0]
+                x1 = vC[0]
+                for y in range(int(vB[1]), int(vA[1])):
+                    self.line((x0, y), (x1, y), clr)
+                    x0 += mBA
+                    x1 += mCA
+
+        def flatTop(vA,vB,vC):
+            try:
+                mCA = (vC[0] - vA[0]) / (vC[1] - vA[1])
+                mCB = (vC[0] - vB[0]) / (vC[1] - vB[1])
+            except:
+                pass
+            else:
+                x0 = vA[0]
+                x1 = vB[0]
+                for y in range(int(vA[1]), int(vC[1]), -1):
+                    self.line((x0, y),(x1, y), clr)
+                    x0 -= mCA
+                    x1 -= mCB
+
+        if B[1] == C[1]:
+            # Parte plana abajo
+            flatBottom(A,B,C)
+        elif A[1] == B[1]:
+            # Parte plana arriba
+            flatTop(A,B,C)
+        else:
+            # Dibujo ambos tipos de triangulos
+            # Teorema de intercepto
+            D = A[0] + ((B[1] - A[1]) / (C[1] - A[1])) * (C[0] - A[0]), B[1]
+            flatBottom(A,B,D)
+            flatTop(B,D,C)
+
 
     def finish(self, filename="render"):  # * glFinish()
         with open("".join((filename, ".bmp")), "wb") as file:
