@@ -20,6 +20,10 @@ window = Window(width=800, height=600)
 ```
 ## Features
 Has the following features: *(From newest to oldest)*
+## Ej.3 - 3d Objects **DONE**
+- [x] Its able to handle an `.obj` file.
+- [x] Provides an .obj file.
+- [x] Each polygon has a random color.
 ## Ej.2 - Lines **DONE**
 - [x] Function that draws a line.
 - [x] That function is able to draw 5 different shapes.
