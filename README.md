@@ -1,5 +1,8 @@
 # Graphic Engine 
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
+## Ej.3 Output
+![imagen](https://user-images.githubusercontent.com/64183934/182501831-d78b2c51-beef-4e3d-8d09-49802fde4e24.png)
+
 
 ## What is it?
 * **No**, it is not a game engine.
