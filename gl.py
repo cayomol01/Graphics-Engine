@@ -42,12 +42,14 @@ def color(color: str or tuple):
     }
 
     if isinstance(color, str):
-        try:
-            color = colors[color]
-        except KeyError:
-            print("Unknown color, using default")
-            color = colors["red"]
-
+        if color.lower() == "random":
+            color = (randint(0, 255), randint(0, 255), randint(0, 255))
+        elif color.lower() in colors:
+            color = colors[color.lower()]
+        else:
+            print("Unknown color:", color, "using white")
+            color = (255, 255, 255)
+    
     r, g, b = color
 
     if all(isinstance(x, float) for x in (r, g, b)):
