@@ -112,8 +112,13 @@ class Window:  # * glInit()
         y = int((self.vp_height/2)*(y+1) + self.vp_y)
         self.point(y, x, color_p)
     
-    def line(self, x0, y0, x1, y1, color_p: str or tuple = None):
+    def line(self, v0, vf, color_p: str or tuple = None):
         # Basado en: https://www.uobabylon.edu.iq/eprints/publication_2_22893_6215.pdf
+        
+        x0,y0 = v0[0],v0[1]
+        x1,y1 = vf[0],vf[1]
+        
+        x0,y0,x1,y1 = int(x0),int(y0),int(x1),int(y1)
         
         debug = []
         
