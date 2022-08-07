@@ -4,17 +4,24 @@ Hecho por Jose Pablo Mozon 20309
 
 from gl import Window
 #import time
-
+import random
 #start_time = time.time()
 
-window = Window(1024,512,(1.0,255,0))
+window = Window(400,400,("black"))
 
-for i in range(512):
-    window.point(i,i)
+window.square(0,1,100,("red"))
+
+window.triangle(0,102,100,("blue"))
+
+window.rectangle(102,1,100,200,("green"))
+
+window.triangle_90(102,202,100,("yellow"))
+
+window.nepal(204,1,100,("dark-blue"))
+
+window.hexagon(204,150,100,("purple"))
     
-window.pointViewPort(0,0)
-    
-window.finish()
+window.finish("Memes")
 
 #print("--- %s seconds ---" % (time.time() - start_time))
 
