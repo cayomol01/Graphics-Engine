@@ -3,11 +3,6 @@ A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Com
 ## Ej.3 Output
 ![imagen](https://user-images.githubusercontent.com/64183934/182501831-d78b2c51-beef-4e3d-8d09-49802fde4e24.png)
 
-
-## Lab output
-![imagen](https://user-images.githubusercontent.com/64183934/180923458-27f9ae30-4f8a-4b48-990e-a025823e252d.png)
-
-
 ## What is it?
 * **No**, it is not a game engine.
 * **No**, it is not a chat bot.
