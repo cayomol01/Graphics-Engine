@@ -1,5 +1,8 @@
 # Graphic Engine 
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
+## Ej.3 Output
+![imagen](https://user-images.githubusercontent.com/64183934/182501831-d78b2c51-beef-4e3d-8d09-49802fde4e24.png)
+
 
 ## Lab output
 ![imagen](https://user-images.githubusercontent.com/64183934/180923458-27f9ae30-4f8a-4b48-990e-a025823e252d.png)
@@ -24,6 +27,10 @@ window = Window(width=800, height=600)
 ```
 ## Features
 Has the following features: *(From newest to oldest)*
+## Ej.3 - 3d Objects **DONE**
+- [x] Its able to handle an `.obj` file.
+- [x] Provides an .obj file.
+- [x] Each polygon has a random color.
 ## Ej.2 - Lines **DONE**
 - [x] Function that draws a line.
 - [x] That function is able to draw 5 different shapes.
