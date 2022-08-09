@@ -2,7 +2,7 @@
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
 Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
 
-# See the result in `Memes.bmp`
+![imagen](https://user-images.githubusercontent.com/64183934/183795601-78073522-d265-4a5a-9bd4-5e675656e8d7.png)
 
 ## What is it?
 * **No**, it is not a game engine.
