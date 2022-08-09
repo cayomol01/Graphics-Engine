@@ -6,7 +6,7 @@ Basado en el codigo hecho en clase
 from random import randint, random
 from struct import pack
 from ObjectLiterally import Model
-from Numeme import mul
+from Memepy import mul
 
 def char(c):
     return pack('=c', c.encode('ascii'))
@@ -342,4 +342,4 @@ class Window:  # * glInit()
                 for y in x:
                     file.write(y)
 
-        #print("Done")
+        print("Done")
