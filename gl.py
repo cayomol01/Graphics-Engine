@@ -5,7 +5,7 @@ Basado en el codigo hecho en clase
 
 from random import randint, random
 from struct import pack
-from ObjectObject import ObjectLiterally as Model
+from ObjectLiterally import Model
 from Numeme import mul
 
 def char(c):
