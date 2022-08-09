@@ -1,5 +1,6 @@
 # Graphic Engine 
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
+Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
 
 ## What is it?
 * **No**, it is not a game engine.
