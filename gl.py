@@ -5,8 +5,10 @@ Basado en el codigo hecho en clase
 
 from random import randint, random
 from struct import pack
+from math import pi,sin,cos
 from ObjectLiterally import Model
-from Memepy import mul
+from Memepy import mul, dot, cross, sub, norm, div
+import shaders
 
 def char(c):
     return pack('=c', c.encode('ascii'))
@@ -18,7 +20,6 @@ def word(w):
 
 def dword(d):
     return pack('=l', d)
-
 
 def color(color: str or tuple):
     """
@@ -66,6 +67,21 @@ def color(color: str or tuple):
     > (0.0,0.5,1.0) should be a tuple of floats""")
         raise
 
+def bary_coords(A, B, C, P) -> tuple: 
+    
+    area_PBC = (B[1] - C[1]) * (P[0] - C[0]) + (C[0] - B[0]) * (P[1] - C[1])
+    area_PAC = (C[1] - A[1]) * (P[0] - C[0]) + (A[0] - C[0]) * (P[1] - C[1])
+    area_ABC = (B[1] - C[1]) * (A[0] - C[0]) + (C[0] - B[0]) * (A[1] - C[1])
+    
+    try: 
+        u = area_PBC / area_ABC
+        v = area_PAC / area_ABC
+        w = 1 - u - v
+    except:
+        return -1,-1,-1
+    else:
+        return u,v, w
+
 class Window:  # * glInit()
     # * glCreateWindow(width, height)
     def __init__(self, width, height, clear_color="red", current_color="black") -> None:
@@ -74,13 +90,21 @@ class Window:  # * glInit()
         self.clear_color = color(clear_color)  # Default "red"
         self.current_color = color(current_color)  # Default "black"
 
+        self.active_texture = None
+        self.active_shader = None
+        
+        self.light_direction = (0,0,1)
+
         self.clear()
         self.setViewPort(0, 0, width, height)
+        self.shaders = {"flat": shaders.flat}
 
     def clear(self):  # * glClear()
         self.pixels = [
             [self.clear_color for y in range(self.width)] for x in range(self.height)
         ]
+        
+        self.zbuffer = [[float('inf') for y in range(self.width)] for x in range(self.height)]
 
     def clearColor(self, color_p: str or tuple):  # *  glClearColor(r, g, b)
         self.clearColor = color(color_p)
@@ -90,11 +114,10 @@ class Window:  # * glInit()
 
     def point(self, x, y, color_p: str or tuple = None):  # * glPoint(x, y)
         try:
-            self.pixels[y][x] = color(color_p) if color_p else self.current_color
+            self.pixels[y][x] = color(color_p or self.current_color) 
         except IndexError:
             #print("Point out of bounds", x, y)
-            pass
-            
+            pass  
     # VIEW PORT
     def setViewPort(self, x, y, width, height):  # * glViewPort(x, y, width, height)
         self.vp_x = x
@@ -212,6 +235,32 @@ class Window:  # * glInit()
             self.finish()
             input("Press Enter to continue...")
 
+    def createRotationMatrix(self, pitch = 0, yaw = 0, roll = 0):
+        # En grados
+        pitch   *= pi/180
+        yaw     *= pi/180
+        roll    *= pi/180
+        #En radianes
+        
+        pitch_matrix = [[1, 0, 0, 0],
+                        [0, cos(pitch), -sin(pitch), 0],
+                        [0, sin(pitch), cos(pitch), 0],
+                        [0, 0, 0, 1]]
+        
+        yaw_matrix = [[cos(yaw), 0, sin(yaw), 0],
+                      [0, 1, 0, 0],
+                      [-sin(yaw), 0, cos(yaw), 0],
+                      [0, 0, 0, 1]]
+        
+        roll_matrix = [[cos(roll), -sin(roll), 0, 0],
+                       [sin(roll), cos(roll), 0, 0],
+                       [0, 0, 1, 0],
+                       [0, 0, 0, 1]]
+        
+        matrix = [mul(roll_matrix,x) for x in list(zip(*[mul(pitch_matrix,x) for x in yaw_matrix]))]
+        
+        return matrix
+
     def createObjectMatrix(self, translate, rotate, scale):
         
         translation = [[1,0,0,translate[0]],
@@ -219,10 +268,7 @@ class Window:  # * glInit()
                        [0,0,1,translate[2]],
                        [0,0,0,1]]
 
-        rotation = [[1,0,0,0],
-                    [0,1,0,0],
-                    [0,0,1,0],
-                    [0,0,0,1]]
+        rotation = self.createRotationMatrix(*rotate)
         
         scalation = [[scale[0],0,0,0],
                      [0,scale[1],0,0],
@@ -249,6 +295,8 @@ class Window:  # * glInit()
         
         for face in model.faces:
 
+            v_count = len(face)
+
             v0 = model.vertex[ face[0][0] - 1]
             v1 = model.vertex[ face[1][0] - 1]
             v2 = model.vertex[ face[2][0] - 1]        
@@ -256,10 +304,26 @@ class Window:  # * glInit()
             v0 = self.objectTransform(v0, model_matrix)
             v1 = self.objectTransform(v1, model_matrix)
             v2 = self.objectTransform(v2, model_matrix)
+            
+            vt0 = model.texcoords[ face[0][1] - 1 ]
+            vt1 = model.texcoords[ face[1][1] - 1 ]
+            vt2 = model.texcoords[ face[2][1] - 1 ]
+            
+            vn0 = model.normals[ face[0][2] - 1 ]
+            vn1 = model.normals[ face[1][2] - 1 ]
+            vn2 = model.normals[ face[2][2] - 1 ]
 
-            self.glTriangle_std(v0, v1, v2, color((random(),
-                                                  random(),
-                                                  random())))
+            self.glTriangle_bc(v0, v1, v2, text_coords=(vt0, vt1, vt2), normals=(vn0, vn1, vn2))
+            
+            if v_count == 4:
+                v3 = model.vertex[ face[3][0] - 1]
+                v3 = self.objectTransform(v3, model_matrix)
+                vt3 = model.texcoords[ face[3][1] - 1 ]
+                vn3 = model.normals[ face[3][2] - 1 ]
+                
+                self.glTriangle_bc(v0, v2, v3, text_coords=(vt0, vt2, vt3), normals=(vn0, vn2, vn3))
+                
+                
 
     def glTriangle_std(self, A, B, C, clr = None):
             
@@ -315,7 +379,47 @@ class Window:  # * glInit()
             flatBottom(A,B,D)
             flatTop(B,D,C)
 
-
+    def glTriangle_bc(self, A, B, C, text_coords = (), normals=(), clr = None):
+        
+        min_x = round(min(A[0], B[0], C[0]))
+        min_y = round(min(A[1], B[1], C[1]))
+        max_x = round(max(A[0], B[0], C[0]))
+        max_y = round(max(A[1], B[1], C[1]))
+        
+        pre_triangle_normal = cross(sub(B,A),sub(C,A)) 
+        triangle_normal = div(pre_triangle_normal,norm( pre_triangle_normal ))
+        
+        for x in range(min_x, max_x + 1):
+            for y in range(min_y, max_y + 1):
+                
+                u, v, w = bary_coords(A, B, C, (x, y))
+                
+                if u >= 0 and v >= 0 and w >= 0:
+                    
+                    z = A[2] * u + B[2] * v + C[2] * w
+                    if self.width > x >= 0 and self.height > y >= 0:
+                        
+                        if z < self.zbuffer[y][x]:
+                            
+                            self.zbuffer[y][x] = z
+                            
+                            if self.active_shader:
+                                r, g, b = self.active_shader(self,
+                                                             bary_coords = (u, v, w),
+                                                             v_color = clr or self.current_color,
+                                                             text_coords = text_coords,
+                                                             normals = normals, 
+                                                             triangle_normal = triangle_normal
+                                                             )
+                                self.point(x, y, color((r, g, b)))
+                            else: 
+                                self.point(x, y, clr)
+                    
+        
+        
+        
+    
+    
     def finish(self, filename="render"):  # * glFinish()
         with open("".join((filename, ".bmp")), "wb") as file:
             # Header

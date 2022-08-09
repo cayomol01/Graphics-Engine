@@ -43,9 +43,9 @@ class Texture():
                 pixelRow = []
                 
                 for x in range(self.width):
-                    b = ord(image.read(1))
-                    g = ord(image.read(1))
-                    r = ord(image.read(1))
+                    b = ord(image.read(1))/255
+                    g = ord(image.read(1))/255
+                    r = ord(image.read(1))/255
                     
                     pixelRow.append((r, g, b))
                     
@@ -55,3 +55,5 @@ class Texture():
             x = int(v * self.width)
             y = int(u * self.height)
             return self.pixels[y][x]
+        else:
+            return (1,1,1)

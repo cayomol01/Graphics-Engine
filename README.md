@@ -2,6 +2,8 @@
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
 Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
 
+# See the result in `Memes.bmp`
+
 ## What is it?
 * **No**, it is not a game engine.
 * **No**, it is not a chat bot.
@@ -21,6 +23,10 @@ window = Window(width=800, height=600)
 ```
 ## Features
 Has the following features: *(From newest to oldest)*
+## Ej.4 - Shaders and textures
+- [x] Accepts textures 
+- [x] Renders vertices with shaders
+- [x] Flat Shader
 ## Ej.3 - 3d Objects **DONE**
 - [x] Its able to handle an `.obj` file.
 - [x] Provides an .obj file.
