@@ -2,7 +2,17 @@
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
 Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
 
-![imagen](https://user-images.githubusercontent.com/64183934/183795601-78073522-d265-4a5a-9bd4-5e675656e8d7.png)
+### Medium Shot
+![imagen](https://user-images.githubusercontent.com/64183934/184618193-87977114-96eb-4296-bcd0-7462c78d8e51.png)
+
+### Low Angle Shot
+![imagen](https://user-images.githubusercontent.com/64183934/184618242-6bcd364c-2288-432e-99d8-75c608c7b25d.png)
+
+### High Angle Shot
+![imagen](https://user-images.githubusercontent.com/64183934/184618219-5a849df2-7259-4299-88af-b1177242b954.png)
+
+### Dutch Angle Shot
+![imagen](https://user-images.githubusercontent.com/64183934/184618269-6abac54c-f6d8-48b0-8589-80291c15359f.png)
 
 ## What is it?
 * **No**, it is not a game engine.
