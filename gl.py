@@ -5,9 +5,9 @@ Basado en el codigo hecho en clase
 
 from random import randint, random
 from struct import pack
-from math import pi,sin,cos
 from ObjectLiterally import Model
-from Memepy import mul, dot, cross, sub, norm, div
+from math import pi, sin, cos, tan 
+from Memepy import matmul, mul, dot, cross, sub, norm, div, inverse
 import shaders
 
 def char(c):
@@ -69,18 +69,23 @@ def color(color: str or tuple):
 
 def bary_coords(A, B, C, P) -> tuple: 
     
-    area_PBC = (B[1] - C[1]) * (P[0] - C[0]) + (C[0] - B[0]) * (P[1] - C[1])
-    area_PAC = (C[1] - A[1]) * (P[0] - C[0]) + (A[0] - C[0]) * (P[1] - C[1])
-    area_ABC = (B[1] - C[1]) * (A[0] - C[0]) + (C[0] - B[0]) * (A[1] - C[1])
+    ax, ay, _ = A
+    bx, by, _ = B
+    cx, cy, _ = C
+    px, py = P
     
-    try: 
-        u = area_PBC / area_ABC
-        v = area_PAC / area_ABC
-        w = 1 - u - v
-    except:
-        return -1,-1,-1
-    else:
-        return u,v, w
+    area_PBC = (by - cy) * (px - cx) + (cx - bx) * (py - cy)
+    area_PAC = (cy - ay) * (px - cx) + (ax - cx) * (py - cy)
+    area_ABC = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+    
+    if area_ABC == 0: #Zero area triangle
+        return -1, -1, -1
+
+    u = area_PBC / area_ABC
+    v = area_PAC / area_ABC
+    w = 1 - u - v
+    
+    return u, v, w
 
 class Window:  # * glInit()
     # * glCreateWindow(width, height)
@@ -94,6 +99,8 @@ class Window:  # * glInit()
         self.active_shader = None
         
         self.light_direction = (0,0,1)
+
+        self.setViewMatrix()
 
         self.clear()
         self.setViewPort(0, 0, width, height)
@@ -124,6 +131,43 @@ class Window:  # * glInit()
         self.vp_y = y
         self.vp_width = width
         self.vp_height = height
+        
+        self.vp_matrix = [[width/2,0,0,x+width/2],
+                          [0,height/2,0,y+height/2],
+                          [0,0,0.5,0.5],
+                          [0,0,0,1]]
+        
+        self.setProjectionMatrix()
+        
+
+    def setViewMatrix(self, translate = (0,0,0), rotate = (0,0,0)):
+        self.camera_matrix = self.createObjectMatrix(translate,rotate)
+        self.view_matrix = inverse(self.camera_matrix)
+
+    def setLookAt(self, eye, camPosition = (0,0,0)):
+        forward = sub(camPosition, eye)
+        forward = div(forward, norm(forward))
+        
+        right = cross((0,1,0), forward)
+        right = div(right, norm(right))
+        
+        up = cross(forward, right)
+        up = div(up, norm(up))
+        
+        self.camera_matrix = zip(right, up, forward, camPosition) + [0,0,0,1]
+        
+        self.view_matrix = inverse(self.camera_matrix)
+        
+    def setProjectionMatrix(self, n = 0.1, f = 1000, fov = 60):
+        aspectRatio = self.vp_width / self.vp_height
+        
+        t = tan((fov * pi) / 360) * n
+        r = aspectRatio * t
+        
+        self.projection_matrix = [[n/r,0,0,0],
+                                  [0,n/t,0,0],
+                                  [0,0,-(f+n)/(f-n),-2*f*n/(f-n)],
+                                  [0,0,-1,0]]        
 
     def clearViewPort(self, color_p: str or tuple = None):
         for i in [(m, n) for m in range(self.vp_x, self.vp_x + self.vp_width) for n in range(self.vp_y, self.vp_y + self.vp_height)]:
@@ -235,6 +279,7 @@ class Window:  # * glInit()
             self.finish()
             input("Press Enter to continue...")
 
+    # ? DRAWING OBJECT
     def createRotationMatrix(self, pitch = 0, yaw = 0, roll = 0):
         # En grados
         pitch   *= pi/180
@@ -261,7 +306,7 @@ class Window:  # * glInit()
         
         return matrix
 
-    def createObjectMatrix(self, translate, rotate, scale):
+    def createObjectMatrix(self, translate = (0,0,0), rotate = (0,0,0), scale = (1,1,1)):
         
         translation = [[1,0,0,translate[0]],
                        [0,1,0,translate[1]],
@@ -289,9 +334,32 @@ class Window:  # * glInit()
       
         return vf 
     
+    def directTransform(self, vertex, matrix):
+        vector = (*vertex,0)
+        
+        vt = mul(matrix,vector)
+        
+        vf = list(x for x in vt[:3])
+      
+        return vf
+    
+    def cameraTransform(self, vertex):
+        vector = (*vertex,1)
+        
+        vt = matmul(self.vp_matrix, self.projection_matrix)
+        vt = matmul(vt, self.view_matrix)
+        vt = mul(vt,vector)
+        
+        vf = list(x/vt[3] for x in vt[:3])
+      
+        return vf
+    
     def loadObject(self, filename, translate = (0,0,0), rotate=(0,0,0), scale=(1,1,1)):
         model = Model(filename)
         model_matrix = self.createObjectMatrix(translate, rotate, scale)
+        rotation_matrix = self.createRotationMatrix(*rotate)
+        
+        l = 0
         
         for face in model.faces:
 
@@ -305,6 +373,10 @@ class Window:  # * glInit()
             v1 = self.objectTransform(v1, model_matrix)
             v2 = self.objectTransform(v2, model_matrix)
             
+            A = self.cameraTransform(v0)
+            B = self.cameraTransform(v1)
+            C = self.cameraTransform(v2)
+            
             vt0 = model.texcoords[ face[0][1] - 1 ]
             vt1 = model.texcoords[ face[1][1] - 1 ]
             vt2 = model.texcoords[ face[2][1] - 1 ]
@@ -312,16 +384,27 @@ class Window:  # * glInit()
             vn0 = model.normals[ face[0][2] - 1 ]
             vn1 = model.normals[ face[1][2] - 1 ]
             vn2 = model.normals[ face[2][2] - 1 ]
+            
+            vn0 = self.directTransform(vn0, rotation_matrix)
+            vn1 = self.directTransform(vn1, rotation_matrix)
+            vn2 = self.directTransform(vn2, rotation_matrix)
 
-            self.glTriangle_bc(v0, v1, v2, text_coords=(vt0, vt1, vt2), normals=(vn0, vn1, vn2))
+            self.glTriangle_bc(A,B,C, vertex = (v0, v1, v2), text_coords=(vt0, vt1, vt2), normals=(vn0, vn1, vn2))
             
             if v_count == 4:
                 v3 = model.vertex[ face[3][0] - 1]
                 v3 = self.objectTransform(v3, model_matrix)
+                D = self.cameraTransform(v3)
                 vt3 = model.texcoords[ face[3][1] - 1 ]
                 vn3 = model.normals[ face[3][2] - 1 ]
+                vn3 = self.directTransform(vn3, rotation_matrix)
                 
-                self.glTriangle_bc(v0, v2, v3, text_coords=(vt0, vt2, vt3), normals=(vn0, vn2, vn3))
+                self.glTriangle_bc(A,C,D, vertex = (v0, v2, v3), text_coords=(vt0, vt2, vt3), normals=(vn0, vn2, vn3))
+            
+            l += 1
+            if l % 100 == 0:
+                print("%", l/len(model.faces)*100, end="\r")
+        print("Loaded",filename,": ", l,"faces")
                 
                 
 
@@ -379,46 +462,46 @@ class Window:  # * glInit()
             flatBottom(A,B,D)
             flatTop(B,D,C)
 
-    def glTriangle_bc(self, A, B, C, text_coords = (), normals=(), clr = None):
+    def glTriangle_bc(self, A, B, C, vertex = (), text_coords = (), normals=(), clr = None):
         
-        min_x = round(min(A[0], B[0], C[0]))
-        min_y = round(min(A[1], B[1], C[1]))
-        max_x = round(max(A[0], B[0], C[0]))
-        max_y = round(max(A[1], B[1], C[1]))
+        A,B,C = vertex
         
+        min_x = max(0,round(min(A[0], B[0], C[0])))
+        min_y = max(0,round(min(A[1], B[1], C[1])))
+
+        max_x = min(self.width, round(max(A[0], B[0], C[0])))
+        max_y = min(self.height, round(max(A[1], B[1], C[1])))
+                
         pre_triangle_normal = cross(sub(B,A),sub(C,A)) 
         triangle_normal = div(pre_triangle_normal,norm( pre_triangle_normal ))
-        
+
         for x in range(min_x, max_x + 1):
             for y in range(min_y, max_y + 1):
                 
                 u, v, w = bary_coords(A, B, C, (x, y))
                 
-                if u >= 0 and v >= 0 and w >= 0:
+                if u < 0 or v < 0 or w < 0:  
+                    continue
                     
-                    z = A[2] * u + B[2] * v + C[2] * w
-                    if self.width > x >= 0 and self.height > y >= 0:
-                        
-                        if z < self.zbuffer[y][x]:
-                            
-                            self.zbuffer[y][x] = z
-                            
-                            if self.active_shader:
-                                r, g, b = self.active_shader(self,
-                                                             bary_coords = (u, v, w),
-                                                             v_color = clr or self.current_color,
-                                                             text_coords = text_coords,
-                                                             normals = normals, 
-                                                             triangle_normal = triangle_normal
-                                                             )
-                                self.point(x, y, color((r, g, b)))
-                            else: 
-                                self.point(x, y, clr)
+                z = A[2] * u + B[2] * v + C[2] * w
                     
-        
-        
-        
-    
+                if z >= self.zbuffer[y][x]:
+                    continue
+                    
+                self.zbuffer[y][x] = z
+                
+                if self.active_shader:
+                    r, g, b = self.active_shader(self,
+                                                    bary_coords = (u, v, w),
+                                                    v_color = clr or self.current_color,
+                                                    text_coords = text_coords,
+                                                    normals = normals, 
+                                                    triangle_normal = triangle_normal
+                                                    )
+                    self.point(x, y, color((r, g, b)))
+                else: 
+                    self.point(x, y, clr)
+                    
     
     def finish(self, filename="render"):  # * glFinish()
         with open("".join((filename, ".bmp")), "wb") as file:

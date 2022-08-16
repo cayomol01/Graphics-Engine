@@ -50,6 +50,7 @@ class Texture():
                     pixelRow.append((r, g, b))
                     
                 self.pixels.append(pixelRow)
+                
     def getColor(self, u, v):
         if 0 <= u <= 1 and 0 <= v <= 1:
             x = int(v * self.width)
