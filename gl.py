@@ -59,6 +59,7 @@ def color(color: str or tuple):
     try:
         return bytes([int(b), int(g), int(r)])
     except ValueError:
+        print(r, g, b)
         print("""!!=-=-=Incorrect color format.=-=-=!! 
     Check you are using the correct notation:
     > Hint: (Min,Mid,Max)
@@ -98,13 +99,15 @@ class Window:  # * glInit()
         self.active_texture = None
         self.active_shader = None
         
-        self.light_direction = (0,0,1)
+        self.light_direction = (1,0,0)
 
         self.setViewMatrix()
 
         self.clear()
         self.setViewPort(0, 0, width, height)
-        self.shaders = {"flat": shaders.flat}
+        self.shaders = {"flat": shaders.flat,
+                        "gourad": shaders.gourad,
+                        "duality": shaders.duality}
 
     def clear(self):  # * glClear()
         self.pixels = [

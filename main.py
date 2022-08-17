@@ -12,13 +12,13 @@ import random
 height = 960
 width = 540
 
-window = Window(height, width,("black"),("white"))
+window = Window(height, width,("red"),("white"))
 
-window.active_shader = window.shaders["flat"]
+window.active_shader = window.shaders["duality"]
 window.active_texture = Texture("ash.bmp")
 
-window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(0,200,0),scale=(20, 20, 20)) # Medium Shot
-window.finish("Meme Medium Shot")
+window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(0,180,0),scale=(20, 20, 20)) # Medium Shot
+window.finish("Meme")
 
 #window.clear()
 #window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(-20,180,0),scale=(25, 25, 25)) # Low Angle Shot

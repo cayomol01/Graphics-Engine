@@ -55,3 +55,15 @@ def inverse(a): # np.linalg.inv
     adj = [[(-1)**(i+j) * determinant(minor(a,i,j)) for j in range(len(a))] for i in range(len(a))]
     return div(transpose(adj),det)
                 
+def flatten(a):
+    """Turn a nested list into a flat list.
+
+    Args:
+        a (list): List of lists to flatten, 2 dimensional matrix.
+
+    Returns:
+        list: Flattened list.
+    Example:
+        [[1,2],[3,4]] -> [1,2,3,4]
+    """
+    return [i for x in a for i in x]
