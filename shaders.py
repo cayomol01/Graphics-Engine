@@ -1,4 +1,4 @@
-from Memepy import dot
+from mathmeme import dot
 from random import choices
 
 def flat(render, **kwargs):
@@ -166,7 +166,6 @@ def dissolvefade(render, **kwargs):
         return (0, 0, 0)
     
     return (r * intensity, g * intensity, b * intensity)
-
 
 def pride(render, **kwargs):
     

@@ -5,9 +5,9 @@ Basado en el codigo hecho en clase
 
 from random import randint, random
 from struct import pack
-from ObjectLiterally import Model
+from object_literally import Model
 from math import pi, sin, cos, tan 
-from Memepy import matmul, mul, dot, cross, sub, norm, div, inverse
+from mathmeme import matmul, mul, dot, cross, sub, norm, div, inverse
 import shaders
 
 def char(c):
@@ -510,7 +510,7 @@ class Window:  # * glInit()
                     
     
     def finish(self, filename="render"):  # * glFinish()
-        with open("".join((filename, ".bmp")), "wb") as file:
+        with open(filename.join(("output/", ".bmp")), "wb") as file:
             # Header
             file.write(bytes('B'.encode('ascii')))
             file.write(bytes('M'.encode('ascii')))
