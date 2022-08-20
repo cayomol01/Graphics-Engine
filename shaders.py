@@ -1,4 +1,5 @@
 from Memepy import dot
+from random import choices
 
 def flat(render, **kwargs):
     
@@ -28,7 +29,6 @@ def flat(render, **kwargs):
         return (0, 0, 0)
     
     return (r * intensity, g * intensity, b * intensity)
-
 
 def gourad(render, **kwargs):
     
@@ -65,6 +65,7 @@ def gourad(render, **kwargs):
     return (r * intensity, g * intensity, b * intensity)
 
 def duality(render, **kwargs):
+    #Based on gourad
     
     u, v, w = kwargs["bary_coords"]
     b, g, r = kwargs["v_color"]
@@ -97,6 +98,7 @@ def duality(render, **kwargs):
         return (0, 0, 0)
     
     return (1 - r * intensity, 1- g * intensity, 1 - b * intensity)
+
 def negative(render, **kwargs):
     
     u, v, w = kwargs["bary_coords"]

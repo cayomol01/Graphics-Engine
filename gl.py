@@ -99,7 +99,7 @@ class Window:  # * glInit()
         self.active_texture = None
         self.active_shader = None
         
-        self.light_direction = (1,0,0)
+        self.light_direction = (0,0,1)
 
         self.setViewMatrix()
 
@@ -107,7 +107,10 @@ class Window:  # * glInit()
         self.setViewPort(0, 0, width, height)
         self.shaders = {"flat": shaders.flat,
                         "gourad": shaders.gourad,
-                        "duality": shaders.duality}
+                        "duality": shaders.duality,
+                        "negative": shaders.negative,
+                        "dissolvefade": shaders.dissolvefade,
+                        "pride": shaders.pride}
 
     def clear(self):  # * glClear()
         self.pixels = [
