@@ -12,26 +12,23 @@ import random
 height = 960
 width = 540
 
-window = Window(height, width,("black"),("white"))
+window = Window(height, width,("red"),("white"))
 
-window.active_shader = window.shaders["flat"]
+
 window.active_texture = Texture("ash.bmp")
 
-window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(-10,190,0),scale=(20, 20, 20)) # Medium Shot
-window.finish("Meme")
+#for x in ["negative","dissolvefade","pride"]:
+#    window.clear()
+#    window.active_shader = window.shaders[x]
+#    window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(-10,190,0),scale=(20, 20, 20))
+#    window.finish(x)
+#
+window.clear()
+window.active_shader = window.shaders["duality"]
+window.light_direction = (1,0,0)
+window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(0,180,0),scale=(20, 20, 20))
+window.finish("duality")
 
-#window.clear()
-#window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(-20,180,0),scale=(25, 25, 25)) # Low Angle Shot
-#window.finish("Meme Low Angle Shot")
-#
-#window.clear()
-#window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(10,180,0),scale=(25, 25, 25)) # High Angle Shot
-#window.finish("Meme High Angle Shot")
-#
-#window.clear()
-#window.loadObject("carro.obj",translate=(width-50, height/6, 0), rotate=(0,160,17),scale=(25, 25, 25)) # DUtch Shot
-#window.finish("Meme Dutch Shot")
-#
 
 #print("--- %s seconds ---" % (time.time() - start_time))
 
