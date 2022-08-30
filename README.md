@@ -1,7 +1,8 @@
 # Graphic Engine 
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
-## Ej.3 Output
-![imagen](https://user-images.githubusercontent.com/64183934/182501831-d78b2c51-beef-4e3d-8d09-49802fde4e24.png)
+Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
+
+![imagen](https://user-images.githubusercontent.com/64183934/183795601-78073522-d265-4a5a-9bd4-5e675656e8d7.png)
 
 ## What is it?
 * **No**, it is not a game engine.
@@ -22,6 +23,10 @@ window = Window(width=800, height=600)
 ```
 ## Features
 Has the following features: *(From newest to oldest)*
+## Ej.4 - Shaders and textures
+- [x] Accepts textures 
+- [x] Renders vertices with shaders
+- [x] Flat Shader
 ## Ej.3 - 3d Objects **DONE**
 - [x] Its able to handle an `.obj` file.
 - [x] Provides an .obj file.
