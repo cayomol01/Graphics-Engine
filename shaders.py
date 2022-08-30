@@ -22,14 +22,9 @@ def flat(render, **kwargs):
         g *= texture_color[1]
         b *= texture_color[2]
         
-    direct_light = render.light_direction
-    intensity = dot(triangleNormal, direct_light) * -1
+    intensity = dot(triangleNormal, render.light_direction) * -1
     
-    r *= intensity
-    g *= intensity
-    b *= intensity
+    if intensity < 0:
+        return (0, 0, 0)
     
-    if intensity > 0:
-        return r,g,b
-    else:
-        return 0,0,0
+    return (r * intensity, g * intensity, b * intensity)
