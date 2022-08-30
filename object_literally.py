@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 from struct import unpack
 
 class Model():

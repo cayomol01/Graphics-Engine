@@ -3,9 +3,8 @@ Hecho por Jose Pablo Monzon 20309
 Basado en el codigo hecho en clase
 """
 
-from random import randint, random
+from random import randint
 from struct import pack
-from typing import Type
 from object_literally import Model, Texture
 from math import pi, sin, cos, tan 
 from mathmeme import matmul, mul, dot, cross, sub, norm, div, inverse
