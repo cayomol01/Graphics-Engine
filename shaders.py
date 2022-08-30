@@ -61,6 +61,16 @@ def gourad(render, **kwargs):
 
     if intensity < 0:
         return (0, 0, 0)
+    elif intensity < 0.2:
+        intensity = 0.2
+    elif intensity < 0.4:
+        intensity = 0.4
+    elif intensity < 0.6:
+        intensity = 0.6
+    elif intensity < 0.8:
+        intensity = 0.8
+    elif intensity < 1:
+        intensity = 1
     
     return (r * intensity, g * intensity, b * intensity)
 

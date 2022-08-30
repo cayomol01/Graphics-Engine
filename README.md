@@ -2,17 +2,29 @@
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
 Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
 
-### Rainbow Heatmap
-![imagen](https://user-images.githubusercontent.com/64183934/185731998-7d91a1c5-808d-46fe-bf9f-b3bce4d44efe.png)
+### Final Render
+![imagen](https://user-images.githubusercontent.com/64183934/187344672-886e6dff-bbd0-4a18-a750-31d075679dc8.png)
 
-### Negative
-![imagen](https://user-images.githubusercontent.com/64183934/185732004-924deb85-d1ac-42cc-9f34-75579a36a194.png)
+Los modelos con shaders por separado:
+### carro.obj / smooth-shading
+Un carro con una version del gourad con un shading mas estilo caricatura
+![imagen](https://user-images.githubusercontent.com/64183934/187341963-2c67dd4a-d578-4597-98ff-51f737f66df6.png)
 
-### Duality
-![imagen](https://user-images.githubusercontent.com/64183934/185732009-5809b837-42aa-4584-91da-69eb60bacd6a.png)
+### pumpkin.obj / negative
+Una calabaza con filtro negativo
+![imagen](https://user-images.githubusercontent.com/64183934/187342676-0249c352-e7cf-4c0d-bf0b-81bb92f88b58.png)
 
-### DissolveFade
-![imagen](https://user-images.githubusercontent.com/64183934/185732016-f66215a0-f54f-4276-bd4d-7d07fd2f474e.png)
+### hair-female / rainbow
+Un cuerpo de mujer con heatmap arcoiris
+![imagen](https://user-images.githubusercontent.com/64183934/187343132-a0422e13-f649-4284-a1df-14341d6bbe52.png)
+
+### objBuilding / duality
+Una iglesia con la mitad blanca mitad negra, como el ying yang
+![imagen](https://user-images.githubusercontent.com/64183934/187343500-5eefa1ce-0f41-4583-a284-b1a9f71e0752.png)
+
+### objDome / dissolvefade
+Un domo que se disuelve hacia su sombra
+![imagen](https://user-images.githubusercontent.com/64183934/187343952-692cd0ef-2cec-40fc-a406-f24356af2ee5.png)
 
 ## What is it?
 * **No**, it is not a game engine.
