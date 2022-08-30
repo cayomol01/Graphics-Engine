@@ -5,7 +5,8 @@ Basado en el codigo hecho en clase
 
 from random import randint, random
 from struct import pack
-from object_literally import Model
+from typing import Type
+from object_literally import Model, Texture
 from math import pi, sin, cos, tan 
 from mathmeme import matmul, mul, dot, cross, sub, norm, div, inverse
 import shaders
@@ -13,10 +14,8 @@ import shaders
 def char(c):
     return pack('=c', c.encode('ascii'))
 
-
 def word(w):
     return pack('=h', w)
-
 
 def dword(d):
     return pack('=l', d)
@@ -90,14 +89,18 @@ def bary_coords(A, B, C, P) -> tuple:
 
 class Window:  # * glInit()
     # * glCreateWindow(width, height)
-    def __init__(self, width, height, clear_color="red", current_color="black") -> None:
+    def __init__(self, width, height, clear_color="red", current_color="black",background:Texture=None) -> None:
         self.width = width
         self.height = height
         self.clear_color = color(clear_color)  # Default "red"
         self.current_color = color(current_color)  # Default "black"
 
-        self.active_texture = None
+        self.active_texture: Texture = None
+        self.active_secondary_texture: Texture = None
         self.active_shader = None
+        self.normal_map = None
+        
+        self.background: Texture = background
         
         self.light_direction = (0,0,1)
 
@@ -118,6 +121,25 @@ class Window:  # * glInit()
         ]
         
         self.zbuffer = [[float('inf') for y in range(self.width)] for x in range(self.height)]
+        
+    def clear_background(self):
+        if not self.background:
+            return None
+        l=0
+        for x in range(self.vp_x, self.vp_x + self.vp_width + 1):
+            for y in range(self.vp_y, self.vp_y + self.vp_height + 1):
+                
+                tU = (x - self.vp_x) / self.vp_width
+                tV = (y - self.vp_y) / self.vp_height
+                
+                texture_color = self.background.getColor(tV,tU)
+                
+                if texture_color:
+                    self.point(x,y, (texture_color[0], texture_color[1], texture_color[2]))
+                l+=1
+                if l % 100 == 0:
+                    print("Drawing Background:", l/(self.width*self.height), end="\r")
+        print("Background drawn succesfully!")
 
     def clearColor(self, color_p: str or tuple):  # *  glClearColor(r, g, b)
         self.clearColor = color(color_p)
@@ -490,23 +512,29 @@ class Window:  # * glInit()
                     continue
                     
                 z = A[2] * u + B[2] * v + C[2] * w
-                    
-                if z >= self.zbuffer[y][x]:
+                
+                try:   
+                    if z >= self.zbuffer[y][x]:
+                        continue
+                except IndexError:
+                    #print(y,x)
                     continue
                     
                 self.zbuffer[y][x] = z
-                
-                if self.active_shader:
-                    r, g, b = self.active_shader(self,
-                                                    bary_coords = (u, v, w),
-                                                    v_color = clr or self.current_color,
-                                                    text_coords = text_coords,
-                                                    normals = normals, 
-                                                    triangle_normal = triangle_normal
-                                                    )
-                    self.point(x, y, color((r, g, b)))
-                else: 
-                    self.point(x, y, clr)
+                try:
+                    if self.active_shader:
+                        r, g, b = self.active_shader(self,
+                                                        bary_coords = (u, v, w),
+                                                        v_color = clr or self.current_color,
+                                                        text_coords = text_coords,
+                                                        normals = normals, 
+                                                        triangle_normal = triangle_normal
+                                                        )
+                        self.point(x, y, color((r, g, b)))
+                    else: 
+                        self.point(x, y, clr)
+                except TypeError:
+                    print("bc"+str(u),str(v),str(w),"tc",str(text_coords),"n",str(normals),"tn",str(triangle_normal))
                     
     
     def finish(self, filename="render"):  # * glFinish()
@@ -535,4 +563,4 @@ class Window:  # * glInit()
                 for y in x:
                     file.write(y)
 
-        print("Done")
+        print("Done: " + filename.join(("output/", ".bmp")))
