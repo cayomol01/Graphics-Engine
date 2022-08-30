@@ -9,7 +9,7 @@ class Model():
         self.texcoords = []
         self.normals =  []
         self.faces = []
-
+        
         for line in self.lines:
             try:
                 prefix, value = line.split(' ', 1)

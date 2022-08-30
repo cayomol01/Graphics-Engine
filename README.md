@@ -2,17 +2,17 @@
 A graphical engine made by **Jose Pablo Monzon**. Made for the class *CC2018 Computer graphics*.
 Para ejecutar el programa, se debe ejecutar el archivo **main.py**.
 
-### Medium Shot
-![imagen](https://user-images.githubusercontent.com/64183934/184618193-87977114-96eb-4296-bcd0-7462c78d8e51.png)
+### Rainbow Heatmap
+![imagen](https://user-images.githubusercontent.com/64183934/185731998-7d91a1c5-808d-46fe-bf9f-b3bce4d44efe.png)
 
-### Low Angle Shot
-![imagen](https://user-images.githubusercontent.com/64183934/184618242-6bcd364c-2288-432e-99d8-75c608c7b25d.png)
+### Negative
+![imagen](https://user-images.githubusercontent.com/64183934/185732004-924deb85-d1ac-42cc-9f34-75579a36a194.png)
 
-### High Angle Shot
-![imagen](https://user-images.githubusercontent.com/64183934/184618219-5a849df2-7259-4299-88af-b1177242b954.png)
+### Duality
+![imagen](https://user-images.githubusercontent.com/64183934/185732009-5809b837-42aa-4584-91da-69eb60bacd6a.png)
 
-### Dutch Angle Shot
-![imagen](https://user-images.githubusercontent.com/64183934/184618269-6abac54c-f6d8-48b0-8589-80291c15359f.png)
+### DissolveFade
+![imagen](https://user-images.githubusercontent.com/64183934/185732016-f66215a0-f54f-4276-bd4d-7d07fd2f474e.png)
 
 ## What is it?
 * **No**, it is not a game engine.

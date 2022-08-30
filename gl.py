@@ -5,9 +5,9 @@ Basado en el codigo hecho en clase
 
 from random import randint, random
 from struct import pack
-from ObjectLiterally import Model
+from object_literally import Model
 from math import pi, sin, cos, tan 
-from Memepy import matmul, mul, dot, cross, sub, norm, div, inverse
+from mathmeme import matmul, mul, dot, cross, sub, norm, div, inverse
 import shaders
 
 def char(c):
@@ -59,6 +59,7 @@ def color(color: str or tuple):
     try:
         return bytes([int(b), int(g), int(r)])
     except ValueError:
+        print(r, g, b)
         print("""!!=-=-=Incorrect color format.=-=-=!! 
     Check you are using the correct notation:
     > Hint: (Min,Mid,Max)
@@ -104,7 +105,12 @@ class Window:  # * glInit()
 
         self.clear()
         self.setViewPort(0, 0, width, height)
-        self.shaders = {"flat": shaders.flat}
+        self.shaders = {"flat": shaders.flat,
+                        "gourad": shaders.gourad,
+                        "duality": shaders.duality,
+                        "negative": shaders.negative,
+                        "dissolvefade": shaders.dissolvefade,
+                        "pride": shaders.pride}
 
     def clear(self):  # * glClear()
         self.pixels = [
@@ -504,7 +510,7 @@ class Window:  # * glInit()
                     
     
     def finish(self, filename="render"):  # * glFinish()
-        with open("".join((filename, ".bmp")), "wb") as file:
+        with open(filename.join(("output/", ".bmp")), "wb") as file:
             # Header
             file.write(bytes('B'.encode('ascii')))
             file.write(bytes('M'.encode('ascii')))
